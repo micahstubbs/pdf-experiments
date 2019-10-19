@@ -57,11 +57,14 @@ $(document).ready(() => {
           const $thumb = $("<div>")
             .attr("class", "thumb")
             .attr("data-pdf-details", JSON.stringify(file_details))
-            .append(
-              $("<div>")
-                .attr("class", "info")
-                .text(pdf_file)
-            )
+            //
+            // uncomment to show file titles
+            //
+            // .append(
+            //   $("<div>")
+            //     .attr("class", "info")
+            //     .text(pdf_file)
+            // )
             .append($img)
             .click(function() {
               CURRENT_FILE = $(this).data("pdf-details");
