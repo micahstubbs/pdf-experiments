@@ -5,30 +5,30 @@ $(document).ready(() => {
   // check for necessary features
   featureCheck();
 
-  var // this demo is currently put as gist which does not support directories
-    PDF_FILES_DIRECTORY = "";
+  const // this demo is currently put as gist which does not support directories
+  PDF_FILES_DIRECTORY = "";
 
-  var // these files should exist in the given path to display correctly
-    PDF_FILES = ["Newton.pdf", "Einstein.pdf", "Faraday.pdf", "Maxwell.pdf"];
+  const // these files should exist in the given path to display correctly
+  PDF_FILES = ["Newton.pdf", "Einstein.pdf", "Faraday.pdf", "Maxwell.pdf"];
 
-  var CURRENT_FILE = {};
-  var $info_name = $("#file_name_info");
-  var $info_pages = $("#file_pages_info");
+  let CURRENT_FILE = {};
+  const $info_name = $("#file_name_info");
+  const $info_pages = $("#file_pages_info");
 
   $(".action").click(function() {
-    var id = $(this).attr("id");
-    var msg = "";
+    const id = $(this).attr("id");
+    let msg = "";
     switch (id) {
       case "rename":
-        msg = "Rename " + CURRENT_FILE.name + " ?";
+        msg = `Rename ${CURRENT_FILE.name} ?`;
         break;
 
       case "share":
-        msg = "Sharing " + CURRENT_FILE.name + " !!";
+        msg = `Sharing ${CURRENT_FILE.name} !!`;
         break;
 
       case "remove":
-        msg = "Remove " + CURRENT_FILE.name + " !?";
+        msg = `Remove ${CURRENT_FILE.name} !?`;
         break;
     }
     alert(msg);
@@ -37,18 +37,18 @@ $(document).ready(() => {
   $.each(PDF_FILES, (index, pdf_file) => {
     PDFJS.getDocument(PDF_FILES_DIRECTORY + pdf_file).then(pdf => {
       pdf.getPage(1).then(page => {
-        var viewport = page.getViewport(0.5);
+        const viewport = page.getViewport(0.5);
         // PDF.js returns a promise when it gets a particular page from the pdf object
         // A canvas element is used to render the page and convert into an image thumbnail
         // if single canvas is used, the content gets overridden when PDF.js promises resolve for subsequent files
         // so a dedicated canvas element is created for rendering a thumbnail for each pdf
         // the canvas element is discarded once the thumbnail is created.
-        var canvas = document.createElement("canvas");
-        var ctx = canvas.getContext("2d");
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
-        var renderContext = {
+        const renderContext = {
           canvasContext: ctx,
           viewport
         };
@@ -61,15 +61,15 @@ $(document).ready(() => {
           // draw on entire canvas
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           // create an img from the canvas which contains the page contents
-          var img_src = canvas.toDataURL();
-          var $img = $("<img>").attr("src", img_src);
+          const img_src = canvas.toDataURL();
+          const $img = $("<img>").attr("src", img_src);
 
-          var file_details = {
+          const file_details = {
             name: pdf_file,
             pages: pdf.pdfInfo.numPages
           };
 
-          var $thumb = $("<div>")
+          const $thumb = $("<div>")
             .attr("class", "thumb")
             .attr("data-pdf-details", JSON.stringify(file_details))
             .append(
@@ -77,10 +77,10 @@ $(document).ready(() => {
                 .attr("class", "close")
                 .html("&times;")
                 .click(function() {
-                  var details = $(this)
+                  const details = $(this)
                     .parent()
                     .data("pdf-details");
-                  alert("Remove " + details.name + " !? ");
+                  alert(`Remove ${details.name} !? `);
                 })
             )
             .append(
@@ -110,12 +110,12 @@ $(document).ready(() => {
 
 function featureCheck() {
   // feature list required for this demo
-  var features = ["webworkers", "canvas"];
-  var featuresAbsent = false;
-  var $list = $("<ul>").attr("id", "feature_list");
+  const features = ["webworkers", "canvas"];
+  let featuresAbsent = false;
+  const $list = $("<ul>").attr("id", "feature_list");
   $.each(features, (index, feature) => {
     if (Modernizr[feature]) {
-      console.log("SUCCESS: " + feature + " present");
+      console.log(`SUCCESS: ${feature} present`);
       var $li = $("<li>")
         .css({
           border: "thin solid black",
@@ -124,12 +124,12 @@ function featureCheck() {
           width: "auto",
           background: "lightgreen"
         })
-        .text("SUCCESS: " + feature + " present");
+        .text(`SUCCESS: ${feature} present`);
       $list.append($li);
     } else {
       // necessary feature is not present
       featuresAbsent = true;
-      console.log("FAILURE: " + feature + " NOT present");
+      console.log(`FAILURE: ${feature} NOT present`);
       var $li = $("<li>")
         .css({
           border: "thin solid black",
@@ -138,7 +138,7 @@ function featureCheck() {
           width: "auto",
           background: "red"
         })
-        .text("FAILURE: " + feature + " NOT present");
+        .text(`FAILURE: ${feature} NOT present`);
       $list.append($li);
     }
   });
