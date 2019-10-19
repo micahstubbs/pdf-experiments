@@ -6,33 +6,14 @@ $(document).ready(() => {
   featureCheck();
 
   const // this demo is currently put as gist which does not support directories
-  PDF_FILES_DIRECTORY = "";
+    PDF_FILES_DIRECTORY = "";
 
   const // these files should exist in the given path to display correctly
-  PDF_FILES = ["Newton.pdf", "Einstein.pdf", "Faraday.pdf", "Maxwell.pdf"];
+    PDF_FILES = ["Newton.pdf", "Einstein.pdf", "Faraday.pdf", "Maxwell.pdf"];
 
   let CURRENT_FILE = {};
   const $info_name = $("#file_name_info");
   const $info_pages = $("#file_pages_info");
-
-  $(".action").click(function() {
-    const id = $(this).attr("id");
-    let msg = "";
-    switch (id) {
-      case "rename":
-        msg = `Rename ${CURRENT_FILE.name} ?`;
-        break;
-
-      case "share":
-        msg = `Sharing ${CURRENT_FILE.name} !!`;
-        break;
-
-      case "remove":
-        msg = `Remove ${CURRENT_FILE.name} !?`;
-        break;
-    }
-    alert(msg);
-  });
 
   $.each(PDF_FILES, (index, pdf_file) => {
     PDFJS.getDocument(PDF_FILES_DIRECTORY + pdf_file).then(pdf => {
