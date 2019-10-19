@@ -5,7 +5,7 @@ $(document).ready(function() {
   // check for necessary features
   featureCheck();
 
-  var PDF_FILES_DIRECTORY = "", // this demo is currenlty put as gist which does not support directories
+  var PDF_FILES_DIRECTORY = "", // this demo is currently put as gist which does not support directories
     // these files should exist in the given path to display correctly
     PDF_FILES = ["Newton.pdf", "Einstein.pdf", "Faraday.pdf", "Maxwell.pdf"];
 
@@ -52,11 +52,11 @@ $(document).ready(function() {
         };
 
         page.render(renderContext).then(function() {
-          //set to draw behind current content
+          // set to draw behind current content
           ctx.globalCompositeOperation = "destination-over";
-          //set background color
+          // set background color
           ctx.fillStyle = "#fff";
-          //draw on entire canvas
+          // draw on entire canvas
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           // create an img from the canvas which contains the page contents
           var img_src = canvas.toDataURL();
