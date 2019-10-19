@@ -58,17 +58,6 @@ $(document).ready(() => {
             .attr("class", "thumb")
             .attr("data-pdf-details", JSON.stringify(file_details))
             .append(
-              $("<span>")
-                .attr("class", "close")
-                .html("&times;")
-                .click(function() {
-                  const details = $(this)
-                    .parent()
-                    .data("pdf-details");
-                  alert(`Remove ${details.name} !? `);
-                })
-            )
-            .append(
               $("<div>")
                 .attr("class", "info")
                 .text(pdf_file)
