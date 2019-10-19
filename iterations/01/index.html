@@ -1,285 +1,274 @@
 <!DOCTYPE html>
 <html>
   <head>
-
     <title>PDF Thumbnails with PDF.JS</title>
-    
-    <meta charset="UTF-8">
-    <meta name="description" content="Creatiing PDF thumbnails with PDF.JS">
-    <meta name="keywords" content="PDF.js thumbnails PDF files image">
-    <meta name="author" content="palerdot">
+
+    <meta charset="UTF-8" />
+    <meta name="description" content="Creatiing PDF thumbnails with PDF.JS" />
+    <meta name="keywords" content="PDF.js thumbnails PDF files image" />
+    <meta name="author" content="palerdot" />
 
     <script src="modernizr.js" type="text/javascript"></script>
     <script src="pdf.js" type="text/javascript"></script>
     <script src="jquery-2.1.0.min.js" type="text/javascript"></script>
 
     <style>
+      html,
+      body {
+        background: #dedede;
+        color: #222;
+        font-family: Roboto, sans-serif;
+        font-size: 13px;
+      }
 
-        html, body {
-            background: #dedede;
-            color: #222;
-            font-family: Roboto,sans-serif;
-            font-size: 13px;
-        }
+      #thumbnail {
+        position: absolute;
+        left: 0;
+        width: 600px;
+        float: left;
+      }
 
-        #thumbnail {
-            position: absolute;
-            left: 0;
-            width: 600px;
-            float: left;
-        }
+      .file_info {
+        position: absolute;
+        left: 600px;
+        width: 300px;
+        height: auto;
+        background: #eee;
+        padding-left: 16px;
+        padding-top: 8px;
+        overflow-y: auto;
+      }
 
-        .file_info {
-            position: absolute;
-            left: 600px;
-            width: 300px;
-            height: auto;
-            background: #eee;
-            padding-left: 16px;
-            padding-top: 8px;
-            overflow-y: auto;
-        }
+      .thumb {
+        display: inline-block;
+        width: 250px;
+        height: 275px;
+        border: thin solid #dedede;
+        margin: 7px 15px;
+      }
 
-        .thumb {
-            display: inline-block;
-            width: 250px;
-            height: 275px;
-            border: thin solid #dedede;
-            margin: 7px 15px;
-        }
+      .thumb.current {
+        border: medium solid #4285f4;
+      }
 
-            .thumb.current {
-                border: medium solid #4285f4;
-            }
+      .thumb .close {
+        position: relative;
+        float: right;
+        font-weight: bold;
+        font-size: 20px;
+        padding: 1px;
+        cursor: pointer;
+      }
 
-            .thumb .close {
-                position: relative;
-                float: right;
-                font-weight: bold;
-                font-size: 20px;
-                padding: 1px;
-                cursor: pointer;
-            }
+      .thumb .info {
+        text-align: center;
+        font-weight: bold;
+        background: white;
+        border: none;
+        padding: 5px 0;
+      }
 
-            .thumb .info {
-                text-align: center;
-                font-weight: bold;
-                background: white;
-                border: none;
-                padding: 5px 0;
-            }        
+      #thumbnail img {
+        width: 250px;
+        height: 250px;
+      }
 
-        #thumbnail img {
-            width: 250px;
-            height: 250px;
-        }
+      .action {
+        border: none;
+        padding: 5px;
+        margin: 5px;
+        color: white;
+      }
 
-        .action {
-            border: none;
-            padding: 5px;
-            margin: 5px;
-            color: white;
-        }
+      .share {
+        background: #4285f4;
+      }
 
-        .share {
-            background: #4285f4;
-        }
+      .remove {
+        background: red;
+      }
 
-        .remove {
-            background: red;
-        }
-
-        .rename {
-            background: orange;
-        }
-
+      .rename {
+        background: orange;
+      }
     </style>
-
   </head>
   <body>
-    
     <!-- Final thumbnail image from the canvas will be rendered here -->
     <div id="thumbnail"></div>
     <!-- Shows some meta info about the files -->
     <div id="file_info" class="file_info">
-        
-        <h2 id="file_name_info">File Name</h2>
-        <hr>
-        <p>
-            <strong>Type: </strong>
-            PDF
-        </p>
-        <p>
-            <strong>Pages: </strong>
-            <span id="file_pages_info">3</span>
-        </p>
+      <h2 id="file_name_info">File Name</h2>
+      <hr />
+      <p>
+        <strong>Type: </strong>
+        PDF
+      </p>
+      <p>
+        <strong>Pages: </strong>
+        <span id="file_pages_info">3</span>
+      </p>
 
-        <p>
-            <button class="rename action" id="rename">Rename</button>
-            <button class="share action" id="share">Share</button>
-            <button class="remove action" id="remove">Remove</button>
-        </p>
-
+      <p>
+        <button class="rename action" id="rename">Rename</button>
+        <button class="share action" id="share">Share</button>
+        <button class="remove action" id="remove">Remove</button>
+      </p>
     </div>
 
     <script>
-      
       // set the pdfjs worker source. not sure if PDFjs uses 'webworkers' API of HTML5
       PDFJS.workerSrc = "pdf.worker.js";
 
       $(document).ready(function() {
-
         // check for necessary features
         featureCheck();
 
         var PDF_FILES_DIRECTORY = "", // this demo is currenlty put as gist which does not support directories
-            // these files should exist in the given path to display correctly
-            PDF_FILES = ['Newton.pdf', 'Einstein.pdf', 'Faraday.pdf', 'Maxwell.pdf'];
+          // these files should exist in the given path to display correctly
+          PDF_FILES = [
+            "Newton.pdf",
+            "Einstein.pdf",
+            "Faraday.pdf",
+            "Maxwell.pdf"
+          ];
 
         var CURRENT_FILE = {},
-            $info_name = $("#file_name_info"),
-            $info_pages = $("#file_pages_info");
+          $info_name = $("#file_name_info"),
+          $info_pages = $("#file_pages_info");
 
-            $(".action").click( function () {
-                var id = $(this).attr("id");
-                var msg = '';
-                switch (id) {
-                    case 'rename':
-                        msg = "Rename " + CURRENT_FILE.name + " ?";
-                    break;
+        $(".action").click(function() {
+          var id = $(this).attr("id");
+          var msg = "";
+          switch (id) {
+            case "rename":
+              msg = "Rename " + CURRENT_FILE.name + " ?";
+              break;
 
-                    case 'share':
-                        msg = "Sharing " + CURRENT_FILE.name + " !!";
-                    break;
+            case "share":
+              msg = "Sharing " + CURRENT_FILE.name + " !!";
+              break;
 
-                    case 'remove':
-                        msg = "Remove " + CURRENT_FILE.name + " !?";
-                    break;
-                }
-                alert(msg);
-            } );
+            case "remove":
+              msg = "Remove " + CURRENT_FILE.name + " !?";
+              break;
+          }
+          alert(msg);
+        });
 
-        $.each( PDF_FILES, function (index, pdf_file) {
-            
-            PDFJS.getDocument( PDF_FILES_DIRECTORY + pdf_file ).then( function (pdf) {
+        $.each(PDF_FILES, function(index, pdf_file) {
+          PDFJS.getDocument(PDF_FILES_DIRECTORY + pdf_file).then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+              var viewport = page.getViewport(0.5);
+              // PDF.js returns a promise when it gets a particular page from the pdf object
+              // A canvas element is used to render the page and convert into an image thumbnail
+              // if single canvas is used, the content gets overridden when PDF.js promises resolve for subsequent files
+              // so a dedicated canvas element is created for rendering a thumbnail for each pdf
+              // the canvas element is discarded once the thumbnail is created.
+              var canvas = document.createElement("canvas");
+              var ctx = canvas.getContext("2d");
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
 
-                pdf.getPage(1).then( function (page) {
+              var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+              };
 
-                    var viewport = page.getViewport(0.5);
-                    // PDF.js returns a promise when it gets a particular page from the pdf object
-                    // A canvas element is used to render the page and convert into an image thumbnail
-                    // if single canvas is used, the content gets overridden when PDF.js promises resolve for subsequent files
-                    // so a dedicated canvas element is created for rendering a thumbnail for each pdf
-                    // the canvas element is discarded once the thumbnail is created.
-                    var canvas = document.createElement('canvas');
-                    var ctx = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
+              page.render(renderContext).then(function() {
+                //set to draw behind current content
+                ctx.globalCompositeOperation = "destination-over";
+                //set background color
+                ctx.fillStyle = "#fff";
+                //draw on entire canvas
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // create an img from the canvas which contains the page contents
+                var img_src = canvas.toDataURL();
+                var $img = $("<img>").attr("src", img_src);
 
-                    var renderContext = {
-                        canvasContext: ctx,
-                        viewport: viewport
-                    };
+                var file_details = {
+                  name: pdf_file,
+                  pages: pdf.pdfInfo.numPages
+                };
 
-                    page.render(renderContext).then( function() {
+                var $thumb = $("<div>")
+                  .attr("class", "thumb")
+                  .attr("data-pdf-details", JSON.stringify(file_details))
+                  .append(
+                    $("<span>")
+                      .attr("class", "close")
+                      .html("&times;")
+                      .click(function() {
+                        var details = $(this)
+                          .parent()
+                          .data("pdf-details");
+                        alert("Remove " + details.name + " !? ");
+                      })
+                  )
+                  .append(
+                    $("<div>")
+                      .attr("class", "info")
+                      .text(pdf_file)
+                  )
+                  .append($img)
+                  .click(function() {
+                    CURRENT_FILE = $(this).data("pdf-details");
+                    $info_name.text(CURRENT_FILE.name);
+                    $info_pages.text(CURRENT_FILE.pages);
+                    $(".thumb").removeClass("current");
+                    $(this).addClass("current");
+                  });
 
-                        //set to draw behind current content
-                        ctx.globalCompositeOperation = "destination-over";
-                        //set background color
-                        ctx.fillStyle = "#fff";
-                        //draw on entire canvas
-                        ctx.fillRect( 0, 0, canvas.width, canvas.height );
-                        // create an img from the canvas which contains the page contents
-                        var img_src = canvas.toDataURL();
-                        var $img = $("<img>")
-                                        .attr("src", img_src);
-
-                        var file_details = {
-                            "name": pdf_file,
-                            "pages": pdf.pdfInfo.numPages
-                        };
-
-                        var $thumb = $("<div>")
-                                        .attr("class", "thumb")
-                                        .attr("data-pdf-details", JSON.stringify(file_details))
-                                        .append( 
-                                            $("<span>")
-                                                .attr("class", 'close')
-                                                .html('&times;')
-                                                .click( function () {
-                                                    var details = $(this).parent().data("pdf-details");
-                                                    alert("Remove " + details.name + " !? ");
-                                                } ) 
-                                        )
-                                        .append( $("<div>").attr("class", 'info').text(pdf_file) )
-                                        .append($img)
-                                        .click( function () {
-                                            CURRENT_FILE = $(this).data("pdf-details");
-                                            $info_name.text(CURRENT_FILE.name);
-                                            $info_pages.text(CURRENT_FILE.pages);
-                                            $(".thumb").removeClass("current");
-                                            $(this).addClass("current")
-                                        } );
-
-                        $thumb.appendTo("#thumbnail").click();
-                        // we have created a thumbnail and rendered the img from the canvas
-                        // discard the temporary canvas created for rendering this thumbnail
-                        canvas.remove();                    
-                        //$(canvas).remove();
-
-                    });
-
-              }); // end of getPage
-
-            }); // end of getDocument
-
+                $thumb.appendTo("#thumbnail").click();
+                // we have created a thumbnail and rendered the img from the canvas
+                // discard the temporary canvas created for rendering this thumbnail
+                canvas.remove();
+                //$(canvas).remove();
+              });
+            }); // end of getPage
+          }); // end of getDocument
         }); // end of each
-
       }); // end of doc ready
 
-    function featureCheck () {
+      function featureCheck() {
         // feature list required for this demo
-        var features = ['webworkers', 'canvas'];
+        var features = ["webworkers", "canvas"];
         var featuresAbsent = false;
-        var $list = $("<ul>")
-                        .attr("id", "feature_list");
-        $.each( features, function (index, feature) {
-            if (Modernizr[feature]) {
-                console.log("SUCCESS: " + feature + " present");
-                var $li = $("<li>")
-                              .css({
-                                "border": "thin solid black",
-                                "padding": "5px",
-                                "margin": "5px",
-                                "width": "auto",
-                                "background": "lightgreen"
-                              })
-                              .text("SUCCESS: " + feature + " present");
-                $list.append($li);
-            } else {
-                // necessary feature is not present
-                featuresAbsent = true;
-                console.log("FAILURE: " + feature + " NOT present");
-                var $li = $("<li>")
-                              .css({
-                                "border": "thin solid black",
-                                "padding": "5px",
-                                "margin": "5px",
-                                "width": "auto",
-                                "background": "red"
-                              })
-                              .text("FAILURE: " + feature + " NOT present");
-                $list.append($li);
-            }
-        } );
+        var $list = $("<ul>").attr("id", "feature_list");
+        $.each(features, function(index, feature) {
+          if (Modernizr[feature]) {
+            console.log("SUCCESS: " + feature + " present");
+            var $li = $("<li>")
+              .css({
+                border: "thin solid black",
+                padding: "5px",
+                margin: "5px",
+                width: "auto",
+                background: "lightgreen"
+              })
+              .text("SUCCESS: " + feature + " present");
+            $list.append($li);
+          } else {
+            // necessary feature is not present
+            featuresAbsent = true;
+            console.log("FAILURE: " + feature + " NOT present");
+            var $li = $("<li>")
+              .css({
+                border: "thin solid black",
+                padding: "5px",
+                margin: "5px",
+                width: "auto",
+                background: "red"
+              })
+              .text("FAILURE: " + feature + " NOT present");
+            $list.append($li);
+          }
+        });
         // append the feature list if any of the feature is not present
         if (featuresAbsent) {
-            $(document.body).append($list);
+          $(document.body).append($list);
         }
-    }
-
+      }
     </script>
-
   </body>
-
 </html>
