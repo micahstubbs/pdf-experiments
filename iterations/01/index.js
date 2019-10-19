@@ -1,17 +1,19 @@
 // set the pdfjs worker source. not sure if PDFjs uses 'webworkers' API of HTML5
 PDFJS.workerSrc = "pdf.worker.js";
 
-$(document).ready(function() {
+$(document).ready(() => {
   // check for necessary features
   featureCheck();
 
-  var PDF_FILES_DIRECTORY = "", // this demo is currently put as gist which does not support directories
-    // these files should exist in the given path to display correctly
+  var // this demo is currently put as gist which does not support directories
+    PDF_FILES_DIRECTORY = "";
+
+  var // these files should exist in the given path to display correctly
     PDF_FILES = ["Newton.pdf", "Einstein.pdf", "Faraday.pdf", "Maxwell.pdf"];
 
-  var CURRENT_FILE = {},
-    $info_name = $("#file_name_info"),
-    $info_pages = $("#file_pages_info");
+  var CURRENT_FILE = {};
+  var $info_name = $("#file_name_info");
+  var $info_pages = $("#file_pages_info");
 
   $(".action").click(function() {
     var id = $(this).attr("id");
@@ -32,9 +34,9 @@ $(document).ready(function() {
     alert(msg);
   });
 
-  $.each(PDF_FILES, function(index, pdf_file) {
-    PDFJS.getDocument(PDF_FILES_DIRECTORY + pdf_file).then(function(pdf) {
-      pdf.getPage(1).then(function(page) {
+  $.each(PDF_FILES, (index, pdf_file) => {
+    PDFJS.getDocument(PDF_FILES_DIRECTORY + pdf_file).then(pdf => {
+      pdf.getPage(1).then(page => {
         var viewport = page.getViewport(0.5);
         // PDF.js returns a promise when it gets a particular page from the pdf object
         // A canvas element is used to render the page and convert into an image thumbnail
@@ -48,10 +50,10 @@ $(document).ready(function() {
 
         var renderContext = {
           canvasContext: ctx,
-          viewport: viewport
+          viewport
         };
 
-        page.render(renderContext).then(function() {
+        page.render(renderContext).then(() => {
           // set to draw behind current content
           ctx.globalCompositeOperation = "destination-over";
           // set background color
@@ -111,7 +113,7 @@ function featureCheck() {
   var features = ["webworkers", "canvas"];
   var featuresAbsent = false;
   var $list = $("<ul>").attr("id", "feature_list");
-  $.each(features, function(index, feature) {
+  $.each(features, (index, feature) => {
     if (Modernizr[feature]) {
       console.log("SUCCESS: " + feature + " present");
       var $li = $("<li>")
