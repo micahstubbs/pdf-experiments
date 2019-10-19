@@ -67,7 +67,7 @@ $(document).ready(() => {
             // )
             .append($img);
 
-          $thumb.appendTo("#thumbnail").click();
+          $thumb.appendTo("#thumbnail"); //.click();
           // we have created a thumbnail and rendered the img from the canvas
           // discard the temporary canvas created for rendering this thumbnail
           canvas.remove();
