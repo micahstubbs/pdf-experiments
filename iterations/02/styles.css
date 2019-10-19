@@ -1,0 +1,78 @@
+html,
+body {
+  background: #dedede;
+  color: #222;
+  font-family: Roboto, sans-serif;
+  font-size: 13px;
+}
+
+#thumbnail {
+  position: absolute;
+  left: 0;
+  width: 600px;
+  float: left;
+}
+
+.file_info {
+  position: absolute;
+  left: 600px;
+  width: 300px;
+  height: auto;
+  background: #eee;
+  padding-left: 16px;
+  padding-top: 8px;
+  overflow-y: auto;
+}
+
+.thumb {
+  display: inline-block;
+  width: 250px;
+  height: 275px;
+  border: thin solid #dedede;
+  margin: 7px 15px;
+}
+
+.thumb.current {
+  border: medium solid #4285f4;
+}
+
+.thumb .close {
+  position: relative;
+  float: right;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 1px;
+  cursor: pointer;
+}
+
+.thumb .info {
+  text-align: center;
+  font-weight: bold;
+  background: white;
+  border: none;
+  padding: 5px 0;
+}
+
+#thumbnail img {
+  width: 250px;
+  height: 250px;
+}
+
+.action {
+  border: none;
+  padding: 5px;
+  margin: 5px;
+  color: white;
+}
+
+.share {
+  background: #4285f4;
+}
+
+.remove {
+  background: red;
+}
+
+.rename {
+  background: orange;
+}
