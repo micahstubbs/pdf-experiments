@@ -65,14 +65,7 @@ $(document).ready(() => {
             //     .attr("class", "info")
             //     .text(pdf_file)
             // )
-            .append($img)
-            .click(function() {
-              CURRENT_FILE = $(this).data("pdf-details");
-              $info_name.text(CURRENT_FILE.name);
-              $info_pages.text(CURRENT_FILE.pages);
-              $(".thumb").removeClass("current");
-              $(this).addClass("current");
-            });
+            .append($img);
 
           $thumb.appendTo("#thumbnail").click();
           // we have created a thumbnail and rendered the img from the canvas
