@@ -19,10 +19,14 @@ $(document).ready(() => {
     PDFJS.getDocument(PDF_FILES_DIRECTORY + pdf_file).then(pdf => {
       pdf.getPage(1).then(page => {
         const viewport = page.getViewport(0.5);
-        // PDF.js returns a promise when it gets a particular page from the pdf object
-        // A canvas element is used to render the page and convert into an image thumbnail
-        // if single canvas is used, the content gets overridden when PDF.js promises resolve for subsequent files
-        // so a dedicated canvas element is created for rendering a thumbnail for each pdf
+        // PDF.js returns a promise when it gets a particular page
+        // from the pdf object
+        // A canvas element is used to render the page
+        // and convert into an image thumbnail
+        // if single canvas is used, the content gets overridden
+        // when PDF.js promises resolve for subsequent files
+        // so a dedicated canvas element is created for rendering
+        // a thumbnail for each pdf
         // the canvas element is discarded once the thumbnail is created.
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
